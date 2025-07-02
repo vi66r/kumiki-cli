@@ -1,29 +1,46 @@
-name: {{.ProjName}}
+# -----------------------------------------------
+#  Kumiki generated project.yml      {{ .ProjName }}
+# -----------------------------------------------
+
+name: {{ .ProjName }}
+
 options:
   deploymentTarget:
-    iOS: {{.DeployTarget}}
+    iOS: {{ .DeployTarget }}
+  createIntermediateGroups: true
+
 settings:
   INFOPLIST_FILE: Info.plist
-  {{- if .TeamID}}
-  DEVELOPMENT_TEAM: {{.TeamID}}
-  {{- end}}
+  {{- if .TeamID }}
+  DEVELOPMENT_TEAM: {{ .TeamID }}
+  {{- end }}
+
+# ---------- Swift Packages ----------
+
 packages:
-{{- if .UsePulse}}
+  {{- if .UsePulse }}
   Pulse:
     url: https://github.com/vi66r/Pulse
     from: 0.1.0
-{{- else if .UseShuttle}}
+  {{- else if .UseShuttle }}
   Shuttle:
     url: https://github.com/vi66r/Shuttle
     from: 0.1.0
-{{- end}}
+  {{- end }}
+
+# ---------- App Target ----------
+
 targets:
-  {{.ProjName}}:
+  {{ .ProjName }}:
     type: application
     platform: iOS
-    bundleId: {{.BundleID}}
-    sources: [App]
+    bundleId: {{ .BundleID }}
+
+    sources:
+      - path: App          # <— explicit form XcodeGen expects now
+
     entitlements:
-      file: {{.ProjName}}.entitlements
+      file: {{ .ProjName }}.entitlements
+
     settings:
       SWIFT_VERSION: "5.10"
