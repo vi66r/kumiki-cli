@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+before:
+  hooks:
+    - go mod tidy           # keep modules clean
+    - go generate ./...     # include any generated code
+
+builds:
+  - id: kumiki
+    main: ./cmd/kumiki      # entry point
+    goos:                   # platforms you actually want to ship
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - 386                 # drop if you don’t need 32-bit Windows
+    env:
+      - CGO_ENABLED=0       # static binaries; safest for curl | bash
+    ldflags: -s -w          # strip debug symbols
+
+archives:
+  - id: kumiki
+    builds: [kumiki]        # ← must match the build.id above
+    format: tar.gz          # zip added automatically for Windows below
+    name_template: >-
+      {{ .ProjectName }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  footer: >
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
