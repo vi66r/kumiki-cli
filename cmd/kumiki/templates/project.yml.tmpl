@@ -1,0 +1,29 @@
+name: {{.ProjName}}
+options:
+  deploymentTarget:
+    iOS: {{.DeployTarget}}
+settings:
+  INFOPLIST_FILE: Info.plist
+  {{- if .TeamID}}
+  DEVELOPMENT_TEAM: {{.TeamID}}
+  {{- end}}
+packages:
+{{- if .UsePulse}}
+  Pulse:
+    url: https://github.com/vi66r/Pulse
+    from: 0.1.0
+{{- else if .UseShuttle}}
+  Shuttle:
+    url: https://github.com/vi66r/Shuttle
+    from: 0.1.0
+{{- end}}
+targets:
+  {{.ProjName}}:
+    type: application
+    platform: iOS
+    bundleId: {{.BundleID}}
+    sources: [App]
+    entitlements:
+      file: {{.ProjName}}.entitlements
+    settings:
+      SWIFT_VERSION: "5.10"
